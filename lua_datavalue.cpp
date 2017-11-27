@@ -2,25 +2,23 @@
 #include "lua_helpers.h"
 #include "lua_opcua.h"
 
-static int opcua_create_node (lua_State *L, int env, const OpcUa::Node& node);
-extern int opcua_create_datavalue(lua_State *L, int env, const OpcUa::DataValue& value);
+static int opcua_create_datavalue(lua_State *L, int env, const OpcUa::DataValue& value);
 
 static int opcua_node_gc(lua_State *L)
 {
-	opcua_node_t *node = (opcua_node_t *)luaL_checkudata (L, 1, OPCUA_NODE);
-	if (node != NULL) {
+	opcua_datavalue_t *dv = (opcua_datavalue_t *)luaL_checkudata (L, 1, OPCUA_DATAVALUE);
+	if (dv != NULL) {
 		/* Nullify structure fields. */
-		luaL_unref (L, LUA_REGISTRYINDEX, node->env);
-		node->env = LUA_NOREF;
+		luaL_unref (L, LUA_REGISTRYINDEX, dv->env);
+		dv->env = LUA_NOREF;
 	}
 	return 0;
 }
 
-#define VALID_NODE(L) \
-	opcua_node_t *node = (opcua_node_t *)luaL_checkudata (L, 1, OPCUA_NODE); \
-	if (!node) { \
-		return lua_opcua_failmsg(L, "Node Missing: ", "Null object");\
-	}
+#define VALID_DATAVALUE(L) \
+	opcua_datavalue_t *dv = (opcua_datavalue_t *)luaL_checkudata (L, 1, OPCUA_DATAVALUE); \
+	if (!dv) { return lua_opcua_failmsg(L, "DataValue Missing: ", "Null object"); } \
+
 
 static int opcua_node_get_id(lua_State *L)
 {

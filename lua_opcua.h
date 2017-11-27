@@ -11,6 +11,12 @@ extern "C" {
 }
 #endif
 
+#include <opc/ua/node.h>
+#include <opc/ua/event.h>
+#include <opc/ua/subscription.h>
+#include <opc/ua/client/client.h>
+#include <opc/ua/server/server.h>
+
 #define OPCUA_CLIENT "LUA_OPCUA_CLIENT_KEY"
 #define OPCUA_SERVER "LUA_OPCUA_SERVER_KEY"
 #define OPCUA_NODE "LUA_OPCUA_NODE_KEY"
@@ -20,6 +26,11 @@ typedef struct {
 	lua_State* state;
 	int callback;
 } callback_t;
+
+typedef struct {
+	int env;
+	OpcUa::DataValue value;	
+} opcua_datavalue_t;
 
 typedef struct {
 	int env;
@@ -38,11 +49,11 @@ typedef struct {
 
 typedef struct {
 	int env;
-	OpcUa::Client client;
+	OpcUa::UaClient client;
 } opcua_client_t;
 
 typedef struct {
 	int env;
-	OpcUa::Server server;
-} opcua_server_t
+	OpcUa::UaServer server;
+} opcua_server_t;
 
