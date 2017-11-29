@@ -4,7 +4,6 @@
 
 #include "oolua.h"
 
-typedef std::vector<OpcUa::Node> vector_Node;
 
 OOLUA_PROXY(OpcUa::Node)
 	OOLUA_TAGS(
