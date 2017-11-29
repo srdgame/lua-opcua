@@ -8,6 +8,12 @@
 #include <opc/ua/client/client.h>
 #include <opc/ua/server/server.h>
 
+#include "opcua_enums.h"
+#include "messageid_enums.h"
+#include "objectid_enums.h"
+#include "status_code_enums.h"
+#include "attribute_id_enums.h"
+
 using namespace OpcUa;
 
 namespace lua_opcua {
@@ -53,18 +59,11 @@ namespace lua_opcua {
 			"DIAGNOSTIC_INFO", VariantType::DIAGNOSTIC_INFO
 		);
 
-		module.new_enum("MessageId",
-			"INVALID", MessageId::INVALID
-		);
-		module.new_enum("ReferenceId",
-			"References", ReferenceId::References
-		);
-		module.new_enum("ObjectId",
-			"Null", ObjectId::Null
-		);
-		module.new_enum("ExpandedObjectId",
-			"Null", ExpandedObjectId::Null
-		);
+		REG_ENUM_MessageId()
+		REG_ENUM_ReferenceId()
+		REG_ENUM_ObjectId()
+		REG_ENUM_ExpandedObjectId()
+
 		module.new_usertype<Variant>("Variant",
 			sol::constructors< Variant(), Variant(bool), Variant(int), Variant(long), Variant(double), Variant(const char*), Variant(MessageId), Variant(ReferenceId), Variant(ObjectId), Variant(ExpandedObjectId) >(),
 			"Dimensions", &Variant::Dimensions,
@@ -124,10 +123,9 @@ namespace lua_opcua {
 			"NamespaceIndex", &QualifiedName::NamespaceIndex,
 			"Name", &QualifiedName::Name
 		);
-		module.new_enum("StatusCode",
-			"Good", StatusCode::Good
-			//--TODO:
-		);
+
+		REG_ENUM_StatusCode()
+
 		module.new_usertype<DateTime>("DateTime",
 			sol::constructors< DateTime(), DateTime(int64_t) >(),
 			"Value", &DateTime::Value,
@@ -148,10 +146,9 @@ namespace lua_opcua {
 			"SetSourceTimestamp", &DataValue::SetSourceTimestamp,
 			"SetServerTimestamp", &DataValue::SetServerTimestamp
 		);
-		module.new_enum("AttributeId",
-			"NodeId", AttributeId::NodeId
-			// TODO:
-		);
+
+		REG_ENUM_AttributeId()
+
 		module.new_enum("VariableAccessLevel",
 			"CurrentRead", VariableAccessLevel::CurrentRead,
 			"CurrentWrite", VariableAccessLevel::CurrentWrite,
@@ -176,12 +173,9 @@ namespace lua_opcua {
 			"DataType", NodeClass::DataType,
 			"View", NodeClass::View
 		);
-		module.new_enum("AttributeWriteMask",
-			"None", AttributeWriteMask::None,
-			"AccessLevel", AttributeWriteMask::AccessLevel
-			// TODO:
-		);
-		
+
+		REG_ENUM_AttributeWriteMask()
+
 		module.new_usertype<Node>("Node",
 			sol::constructors< Node(), Node(Services::SharedPtr), Node(Services::SharedPtr, NodeId) >(),
 			"Id", sol::property(&Node::GetId),
@@ -243,11 +237,13 @@ namespace lua_opcua {
 				static_cast<Node (Node::*)(uint32_t, const std::string&, const Variant&) const >(&Node::AddProperty)
 			),
 
+			/*
 			"AddMethod", sol::overload(
 				static_cast<Node (Node::*)(const NodeId&, const QualifiedName&, std::function<std::vector<Variant>(NodeId, std::vector<Variant>)> ) const >(&Node::AddMethod),
 				static_cast<Node (Node::*)(const std::string&, const std::string&, std::function<std::vector<Variant>(NodeId, std::vector<Variant>)>) const >(&Node::AddMethod),
 				static_cast<Node (Node::*)(uint32_t, const std::string&, std::function<std::vector<Variant>(NodeId, std::vector<Variant>)>) const >(&Node::AddMethod)
 			),
+			*/
 
 			"Server", sol::property(&Node::GetServices),
 
@@ -314,6 +310,7 @@ namespace lua_opcua {
 			sol::constructors< UaServer(), UaServer(bool), UaServer(const Common::Logger::SharedPtr &) >(),
 			"SetEndpoint", &UaServer::SetEndpoint,
 			"SetProductURI", &UaServer::SetProductURI,
+			"SetServerURI", &UaServer::SetServerURI,
 			"SetServerName", &UaServer::SetServerName,
 			"AddAddressSpace", &UaServer::AddAddressSpace,
 			"EnableEventNotification", &UaServer::EnableEventNotification,
