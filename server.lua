@@ -43,7 +43,12 @@ print("Ctrl-C to exit")
 
 while true do
 	counter = counter + 1
-	myvar.Value = opcua.Variant.new(counter)
+	--myvar.Value = opcua.Variant.new(counter)
+	local val = opcua.DataValue.new(counter)
+	val:SetSourceTimestamp(opcua.DateTime.Current()) --FromTimeT(timestamp)
+	val:SetServerTimestamp(opcua.DateTime.Current()) --FromTimeT(timestamp)
+	myvar.DataValue = val
+
 	local msg = "This is event number: "..counter
 	ev.Message = opcua.LocalizedText.new(msg)
 	server:TriggerEvent(ev)

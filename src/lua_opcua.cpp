@@ -139,9 +139,9 @@ namespace lua_opcua {
 			"Encoding", &DataValue::Encoding,
 			"Value", &DataValue::Value,
 			"Status", &DataValue::Status,
-			"SourceTimestamp", &DataValue::SourceTimestamp,
+			"SourceTimestamp", sol::readonly(&DataValue::SourceTimestamp),
 			"SourcePicoseconds", &DataValue::SourcePicoseconds,
-			"ServerTimestamp", &DataValue::ServerTimestamp,
+			"ServerTimestamp", sol::readonly(&DataValue::ServerTimestamp),
 			"ServerPicoseconds", &DataValue::ServerPicoseconds,
 			"SetSourceTimestamp", &DataValue::SetSourceTimestamp,
 			"SetServerTimestamp", &DataValue::SetServerTimestamp
