@@ -1,4 +1,5 @@
 #define SOL_CHECK_ARGUMENTS 1
+#define SOL_EXCEPTIONS_SAFE_PROPAGATION 1
 #include <sol/sol.hpp>
 
 #include <opc/common/logger.h>
@@ -109,7 +110,7 @@ namespace lua_opcua {
 			"GetGuidIdentifier", &NodeId::GetGuidIdentifier,
 			sol::meta_function::to_string, [](NodeId& id) { 
 				std::stringstream ss;
-				ss << "Encoding: " << id.Encoding << " NamespaceURI: " << id.NamespaceURI << " ServerIndex: " << id.ServerIndex;
+				ss << "Encoding: " << (int)id.Encoding << " NamespaceURI: " << id.NamespaceURI << " ServerIndex: " << id.ServerIndex;
 				return ss.str();
 			}
 		);
@@ -144,7 +145,18 @@ namespace lua_opcua {
 			"ServerTimestamp", sol::readonly(&DataValue::ServerTimestamp),
 			"ServerPicoseconds", &DataValue::ServerPicoseconds,
 			"SetSourceTimestamp", &DataValue::SetSourceTimestamp,
-			"SetServerTimestamp", &DataValue::SetServerTimestamp
+			"SetServerTimestamp", &DataValue::SetServerTimestamp,
+			sol::meta_function::to_string, [](DataValue& obj) { 
+				std::stringstream ss;
+				ss << "Encoding " << (int)obj.Encoding << ", ";
+				ss << "Value " << obj.Value.ToString() << ", ";
+				ss << "Status " << (int)obj.Status << ", ";
+				ss << "SourceTimestamp " << DateTime::ToTimeT(obj.SourceTimestamp) << ", ";
+				ss << "SourcePicoseconds " << obj.SourcePicoseconds << ", ";
+				ss << "ServerTimestamp " << DateTime::ToTimeT(obj.ServerTimestamp) << ", ";
+				ss << "ServerPicoseconds " << obj.ServerPicoseconds;
+				return ss.str();
+			}
 		);
 
 		REG_ENUM_AttributeId()
