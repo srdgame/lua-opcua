@@ -1,5 +1,4 @@
 #define SOL_CHECK_ARGUMENTS 1
-#define SOL_EXCEPTIONS_SAFE_PROPAGATION 1
 #include <sol/sol.hpp>
 
 #include <opc/common/logger.h>
@@ -201,8 +200,8 @@ namespace lua_opcua {
 				static_cast<std::vector<Node> (Node::*)() const >(&Node::GetChildren)
 			),
 			"GetChild", sol::overload(
-				static_cast<Node (Node::*)(const std::vector<OpcUa::QualifiedName>&) const >(&Node::GetChild),
-				static_cast<Node (Node::*)(const std::vector<std::string> &) const >(&Node::GetChild),
+				[](Node& node, sol::as_table_t<std::vector<std::string>> var) { return node.GetChild(var.source); },
+				[](Node& node, sol::as_table_t<std::vector<OpcUa::QualifiedName>> var) { return node.GetChild(var.source); },
 				static_cast<Node (Node::*)(const std::string &) const >(&Node::GetChild)
 			),
 			"GetProperties", &Node::GetProperties,
@@ -274,13 +273,13 @@ namespace lua_opcua {
 			"SourceNode", &Event::SourceNode,
 			"SourceName", &Event::SourceName,
 			"SetValue", sol::overload(
-				static_cast<void (Event::*)(const std::vector<QualifiedName> &, Variant) >(&Event::SetValue), 
+				[](Event& event, sol::as_table_t<std::vector<OpcUa::QualifiedName>> vec, Variant& var) { return event.SetValue(vec.source, var); },
 				static_cast<void (Event::*)(AttributeId, Variant) >(&Event::SetValue),
 				static_cast<void (Event::*)(const QualifiedName&, Variant) >(&Event::SetValue),
 				static_cast<void (Event::*)(const std::string&, Variant) >(&Event::SetValue)
 			),
 			"GetValue", sol::overload(
-				static_cast<Variant (Event::*)(const std::vector<QualifiedName>&) const>(&Event::GetValue), 
+				[](Event& event, sol::as_table_t<std::vector<OpcUa::QualifiedName>> vec) { return event.GetValue(vec.source); },
 				static_cast<Variant (Event::*)(AttributeId) const>(&Event::GetValue),
 				static_cast<Variant (Event::*)(const QualifiedName&) const>(&Event::GetValue),
 				static_cast<Variant (Event::*)(const std::string&) const>(&Event::GetValue)
@@ -338,8 +337,8 @@ namespace lua_opcua {
 			"GetObjectsNode", &UaServer::GetObjectsNode,
 			"GetServerNode", &UaServer::GetServerNode,
 			"GetNodeFromPath", sol::overload(
-				static_cast<Node (UaServer::*)(const std::vector<QualifiedName> &) const>(&UaServer::GetNodeFromPath),
-				static_cast<Node (UaServer::*)(const std::vector<std::string> &) const>(&UaServer::GetNodeFromPath)
+				[](UaServer& server, sol::as_table_t<std::vector<QualifiedName>> vec) { return server.GetNodeFromPath(vec.source); },
+				[](UaServer& server, sol::as_table_t<std::vector<std::string>> vec) { return server.GetNodeFromPath(vec.source); }
 			),
 			"TriggerEvent", &UaServer::TriggerEvent,
 			"CreateSubscription", &UaServer::CreateSubscription,

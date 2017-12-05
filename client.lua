@@ -12,7 +12,8 @@ for _,v in ipairs(objects:GetChildren()) do
 end
 
 local idx = client:GetNamespaceIndex("http://examples.freeopcua.github.io");
-local var = objects:GetChild(idx..":NewObject")
+print(idx)
+local var = objects:GetChild({idx..":NewObject"})
 --local var = objects:GetChild({idx..":NewObject", "MyVariable"})
 print(var)
 print(var:GetChild("MyVariable"))

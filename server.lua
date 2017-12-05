@@ -5,7 +5,7 @@ server:SetEndpoint("opc.tcp://127.0.0.1:4840/freeopcua/server/")
 server:SetServerURI("urn:://exampleserver.freeopcua.github.io")
 server:Start()
 
---print(server:GetNamespaceIndex("http://examples.freeopcua.github.io"))
+print(pcall(server.GetNamespaceIndex, server, "http://examples.freeopcua.github.io"))
 local idx = server:RegisterNamespace("http://examples.freeopcua.github.io")
 print(idx)
 print(server:GetNamespaceIndex("http://examples.freeopcua.github.io"))
@@ -16,6 +16,8 @@ local nid = opcua.NodeId.new(99, idx)
 local qn = opcua.QualifiedName.new("NewObject", idx)
 
 local newobject = objects:AddObject(nid, qn)
+print(newobject, pcall(objects.AddObject, objects, nid, qn))
+--print(objects:GetChild("99:NewObject"))
 
 local myvar = newobject:AddVariable(idx, "MyVariable", opcua.Variant.new(8))
 local myprop = newobject:AddVariable(idx, "MyProperty", opcua.Variant.new(8.8))
