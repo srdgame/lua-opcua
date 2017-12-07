@@ -9,7 +9,6 @@ print(pcall(server.GetNamespaceIndex, server, "http://examples.freeopcua.github.
 local idx = server:RegisterNamespace("http://examples.freeopcua.github.io")
 print(idx)
 print(server:GetNamespaceIndex("http://examples.freeopcua.github.io"))
-idx = server:RegisterNamespace("http://examples.freeopcua.github.io")
 print(idx)
 local objects = server:GetObjectsNode()
 local nid = opcua.NodeId.new(99, idx)
@@ -45,6 +44,8 @@ ev.Severity = 2
 ev.SourceNode = opcua.NodeId.new(opcua.ObjectId.Server)
 ev.SourceName = "Event from FreeOpcUA"
 ev.Time = opcua.DateTime.Current()
+
+server:DeleteNodes({newobject}, true)
 
 print("Ctrl-C to exit")
 

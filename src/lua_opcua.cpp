@@ -256,7 +256,7 @@ namespace lua_opcua {
 			),
 			*/
 
-			"Server", sol::property(&Node::GetServices),
+			"Services", sol::property(&Node::GetServices),
 
 			sol::meta_function::to_string, [](Node& obj) { return obj.ToString(); }
 		);
@@ -313,7 +313,7 @@ namespace lua_opcua {
 			"GetRootNode", &UaClient::GetRootNode,
 			"GetObjectsNode", &UaClient::GetObjectsNode,
 			"GetServerNode", &UaClient::GetServerNode,
-			"DeleteNodes", &UaClient::DeleteNodes,
+			"DeleteNodes", [](UaClient& client, sol::as_table_t<std::vector<OpcUa::Node>> vec, bool recursive = false) { client.DeleteNodes(vec.source, recursive); },
 			"CreateSubscription", &UaClient::CreateSubscription,
 			"CreateServerOperations", &UaClient::CreateServerOperations
 		);
@@ -336,6 +336,7 @@ namespace lua_opcua {
 			"GetRootNode", &UaServer::GetRootNode,
 			"GetObjectsNode", &UaServer::GetObjectsNode,
 			"GetServerNode", &UaServer::GetServerNode,
+			//"DeleteNodes", [](UaServer& server, sol::as_table_t<std::vector<OpcUa::Node>> vec) { server.DeleteNodes(vec.source); },
 			"GetNodeFromPath", sol::overload(
 				[](UaServer& server, sol::as_table_t<std::vector<QualifiedName>> vec) { return server.GetNodeFromPath(vec.source); },
 				[](UaServer& server, sol::as_table_t<std::vector<std::string>> vec) { return server.GetNodeFromPath(vec.source); }
@@ -343,6 +344,21 @@ namespace lua_opcua {
 			"TriggerEvent", &UaServer::TriggerEvent,
 			"CreateSubscription", &UaServer::CreateSubscription,
 			"CreateServerOperations", &UaServer::CreateServerOperations
+		);
+		module.new_usertype<Services>("Services",
+			"OpenSecureChannel", &Services::OpenSecureChannel,
+			"CloseSecureChannel", &Services::CloseSecureChannel,
+			"CreateSession", &Services::CreateSession,
+			"ActivateSession", &Services::ActivateSession,
+			"CloseSession", &Services::CloseSession,
+			"AbortSession", &Services::AbortSession,
+			"DeleteNodes", &Services::DeleteNodes,
+			"Attributes", &Services::Attributes,
+			"Endpoints", &Services::Endpoints,
+			"Method", &Services::Method,
+			"NodeManagement", &Services::NodeManagement,
+			"Subscriptions", &Services::Subscriptions,
+			"Views", &Services::Views
 		);
 
 		return module;
